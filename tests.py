@@ -2,6 +2,11 @@ from user import User
 from vehicle import Vehicle
 from rent import Rent
 import datetime
+from signup import SignUp
+from signin import SignIn
+from inmemoryuserrepository import InMemoryUserRepository
+from exceptions import UserEmailAlreadyRegistered, IncorrectEmailOrPassword
+import pytest
 
 def test_user_getters_setters():
     user = User('Harrison', 'h.candido20@unifesp.br', '12345&7')
@@ -39,3 +44,46 @@ def test_rent_getters_setters():
     rent_list.remove_vehicle(car.plate)
 
     assert rent_list.get_rented_vehicles() == [[], 0]
+
+def test_sign_up_user():
+    user_repo = InMemoryUserRepository()
+    sign_up = SignUp(user_repo)
+    sign_up.perform('Harrison Caetano Cândido', 'h.candido20@unifesp.br', '12345&7')
+
+    assert user_repo.find_by_email('h.candido20@unifesp.br') != None
+
+def test_sign_up_user_email_already_registered():
+    user_repo = InMemoryUserRepository()
+    sign_up = SignUp(user_repo)
+    sign_up.perform('Harrison Caetano Cândido', 'h.candido20@unifesp.br', '12345&7')
+
+    with pytest.raises(UserEmailAlreadyRegistered):
+        sign_up.perform('Harrison Caetano Cândido', 'h.candido20@unifesp.br', '12345&7')
+
+def test_sign_in_user():
+    user_repo = InMemoryUserRepository()
+    sign_up = SignUp(user_repo)
+    sign_up.perform('Harrison Caetano Cândido', 'h.candido20@unifesp.br', '12345&7')
+
+    sign_in = SignIn(user_repo)
+
+    # aqui ele deve retornar o objeto usuário logado
+    assert sign_in.perform('h.candido20@unifesp.br', '12345&7') != False
+
+def test_sign_in_wrong_password():
+    user_repo = InMemoryUserRepository()
+    sign_up = SignUp(user_repo)
+    sign_up.perform('Harrison Caetano Cândido', 'h.candido20@unifesp.br', '12345&7')
+
+    sign_in = SignIn(user_repo)
+
+    # aqui deve ser lancada uma excessao para email nao encontrado
+    with pytest.raises(IncorrectEmailOrPassword):
+        sign_in.perform('h.candido27@unifesp.br', '12345&7')
+
+    # aqui deve ser lancada uma excessao para senha nao encontrada
+    with pytest.raises(IncorrectEmailOrPassword):
+        sign_in.perform('h.candido20@unifesp.br', '121345&7')
+
+
+

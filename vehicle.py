@@ -10,7 +10,7 @@ class Vehicle:
         self.date_it_was_rented = "It is avaiable"
         self.date_it_will_be_returned = "It is avaiable"
         self.rented_days = "It is avaiable"
-        self.total_value = 0.0
+        self.amount = 0.0
     
     def get_brand(self):
         return self.brand
@@ -31,7 +31,7 @@ class Vehicle:
         self.date_it_was_rented = "It is avaiable"
         self.date_it_will_be_returned = "It is avaiable"
         self.rented_days = "It is avaiable"
-        self.total_value = 0.0
+        self.amount = 0.0
 
     def get_rental_date(self):
         return [self.date_it_was_rented, self.date_it_will_be_returned, self.rented_days]
@@ -41,8 +41,8 @@ class Vehicle:
         self.date_it_was_rented = datetime.date.fromisoformat(date_it_was_rented)
         self.date_it_will_be_returned = datetime.date.fromisoformat(date_it_will_be_returned)
         self.rented_days = (self.date_it_will_be_returned - self.date_it_was_rented).days
-        total_value = self.rented_days * self.daily_rate
-        self.total_value = total_value + total_value * 0.15
+        amount = self.rented_days * self.daily_rate
+        self.amount = amount + amount * 0.15
 
     def get_total_value(self):
-        return self.total_value
+        return self.amount

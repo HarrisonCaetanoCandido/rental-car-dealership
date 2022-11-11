@@ -17,5 +17,8 @@ class User:
     def reset_password(self, password):
         self.password = password
 
+    def get_rent_list(self):
+        return self.rent_list
+
     def set_rent_list(self, rent_list):
         self.rent_list = rent_list
