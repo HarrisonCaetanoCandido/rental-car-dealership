@@ -5,15 +5,15 @@ import datetime
 from signup import SignUp
 from signin import SignIn
 from inmemoryuserrepository import InMemoryUserRepository
-from exceptions import UserEmailAlreadyRegistered, IncorrectEmailOrPassword
+from exceptions import UserEmailAlreadyRegistered, IncorrectEmailOrPassword, InvalidPasswordError
 import pytest
 
 def test_user_getters_setters():
-    user = User('Harrison', 'h.candido20@unifesp.br', '12345&7')
+    user = User('Harrison', 'h.candido20@unifesp.br', 'Aa12345&7')
 
     assert user.get_name() == 'Harrison'
     assert user.get_email() == 'h.candido20@unifesp.br'
-    assert user.get_password() == '12345&7'
+    assert user.get_password() == 'Aa12345&7'
 
     user.reset_password('1234577')
 
@@ -34,7 +34,7 @@ def test_vehicle_getters_setters():
     assert car.get_total_value() == 37.0875
 
 def test_rent_getters_setters():
-    user = User('Harrison', 'h.candido20@unifesp.br', '12345&7')
+    user = User('Harrison', 'h.candido20@unifesp.br', 'Aa12345&7')
     rent_list = Rent(user)
     car = Vehicle('Dodge', 'Challenger SRT Hellcat', 'xlsx4267', 10.75, 2019)
     rent_list.add_vehicle(car, '2022-11-05', '2022-11-08')
@@ -45,45 +45,73 @@ def test_rent_getters_setters():
 
     assert rent_list.get_rented_vehicles() == [[], 0]
 
+def test_sign_up_password_length_verification():
+    user_repo = InMemoryUserRepository()
+    sign_up = SignUp(user_repo)
+
+    # less than 6 characters
+    with pytest.raises(InvalidPasswordError):
+        sign_up.perform('Harrison Caetano Cândido', 'h.candido20@unifesp.br', 'A13&7')
+
+    # more than 12 characters
+    with pytest.raises(InvalidPasswordError):
+        sign_up.perform('Harrison Caetano Cândido', 'h.candido20@unifesp.br', '0000000A013&7')
+
+def test_sign_up_password_alfabetic_verification():
+    user_repo = InMemoryUserRepository()
+    sign_up = SignUp(user_repo)
+
+    # upper_letters
+    with pytest.raises(InvalidPasswordError):
+        sign_up.perform('Harrison Caetano Cândido', 'h.candido20@unifesp.br', '0aa13&7')
+
+    # lower_letters
+    with pytest.raises(InvalidPasswordError):
+        sign_up.perform('Harrison Caetano Cândido', 'h.candido20@unifesp.br', '0AA13&7')
+
+def test_sign_up_password_special_character_verification():
+    user_repo = InMemoryUserRepository()
+    sign_up = SignUp(user_repo)
+
+    with pytest.raises(InvalidPasswordError):
+        sign_up.perform('Harrison Caetano Cândido', 'h.candido20@unifesp.br', '0Aa13777')
+
 def test_sign_up_user():
     user_repo = InMemoryUserRepository()
     sign_up = SignUp(user_repo)
-    sign_up.perform('Harrison Caetano Cândido', 'h.candido20@unifesp.br', '12345&7')
+    sign_up.perform('Harrison Caetano Cândido', 'h.candido20@unifesp.br', 'Aa12345&7')
 
     assert user_repo.find_by_email('h.candido20@unifesp.br') != None
 
 def test_sign_up_user_email_already_registered():
     user_repo = InMemoryUserRepository()
     sign_up = SignUp(user_repo)
-    sign_up.perform('Harrison Caetano Cândido', 'h.candido20@unifesp.br', '12345&7')
+    sign_up.perform('Harrison Caetano Cândido', 'h.candido20@unifesp.br', 'Aa12345&7')
 
     with pytest.raises(UserEmailAlreadyRegistered):
-        sign_up.perform('Harrison Caetano Cândido', 'h.candido20@unifesp.br', '12345&7')
+        sign_up.perform('Harrison Caetano Cândido', 'h.candido20@unifesp.br', 'Aa12345&7')
 
 def test_sign_in_user():
     user_repo = InMemoryUserRepository()
     sign_up = SignUp(user_repo)
-    sign_up.perform('Harrison Caetano Cândido', 'h.candido20@unifesp.br', '12345&7')
+    sign_up.perform('Harrison Caetano Cândido', 'h.candido20@unifesp.br', 'Aa12345&7')
 
     sign_in = SignIn(user_repo)
 
     # aqui ele deve retornar o objeto usuário logado
-    assert sign_in.perform('h.candido20@unifesp.br', '12345&7') != False
+    assert sign_in.perform('h.candido20@unifesp.br', 'Aa12345&7') != False
 
 def test_sign_in_wrong_password():
     user_repo = InMemoryUserRepository()
     sign_up = SignUp(user_repo)
-    sign_up.perform('Harrison Caetano Cândido', 'h.candido20@unifesp.br', '12345&7')
+    sign_up.perform('Harrison Caetano Cândido', 'h.candido20@unifesp.br', 'Aa12345&7')
 
     sign_in = SignIn(user_repo)
 
     # aqui deve ser lancada uma excessao para email nao encontrado
     with pytest.raises(IncorrectEmailOrPassword):
-        sign_in.perform('h.candido27@unifesp.br', '12345&7')
+        sign_in.perform('h.candido27@unifesp.br', 'Aa12345&7')
 
     # aqui deve ser lancada uma excessao para senha nao encontrada
     with pytest.raises(IncorrectEmailOrPassword):
         sign_in.perform('h.candido20@unifesp.br', '121345&7')
-
-
-

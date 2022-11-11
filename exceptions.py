@@ -5,3 +5,7 @@ class UserEmailAlreadyRegistered(Exception):
 class IncorrectEmailOrPassword(Exception):
     "O email recebido não está registrado ou a senha não foi encontrada no banco de usuários"
     pass
+
+class InvalidPasswordError(Exception):
+    "Senha inválida, não atende a pelo menos um dos requisitos mínimos (tamanho, caracter especial, caracter alfabetico ou caracter numerico)"
+    pass
