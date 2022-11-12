@@ -26,8 +26,7 @@ class SignUp:
 
 def invalid_password(user_password):
     # verificacao de tamanho da senha
-    password_length = len(user_password)
-    if password_length < 6 or password_length > 12:
+    if len(user_password) < 6 or len(user_password) > 12:
         return True
 
     # verificacao de ao menos um caracter alfabetico maiusculo
