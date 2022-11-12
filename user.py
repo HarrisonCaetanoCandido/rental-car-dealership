@@ -1,9 +1,11 @@
+from rent import Rent
+
 class User:
     def __init__(self, name, email, password):
         self.name = name
         self.email = email
         self.password = password
-        self.rent_list = None
+        self.rent_list = Rent(self)
     
     def get_name(self):
         return self.name
@@ -19,6 +21,3 @@ class User:
 
     def get_rent_list(self):
         return self.rent_list
-
-    def set_rent_list(self, rent_list):
-        self.rent_list = rent_list

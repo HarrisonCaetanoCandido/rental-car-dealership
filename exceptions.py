@@ -9,3 +9,11 @@ class IncorrectEmailOrPassword(Exception):
 class InvalidPasswordError(Exception):
     "Senha inválida, não atende a pelo menos um dos requisitos mínimos (tamanho, caracter especial, caracter alfabetico ou caracter numerico)"
     pass
+
+class YouHaveAlreadyRentedThisVehicle(Exception):
+    "Caso em que o usuário já alugou o veículo atual"
+    pass
+
+class VehicleCurrentlyRentedError(Exception):
+    "Veículo está sendo alugado no momento"
+    pass
