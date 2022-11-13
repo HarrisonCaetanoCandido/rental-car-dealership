@@ -8,7 +8,7 @@ Based on Clean Architecture we got:
             - should contain number
             - should contain special character
             - should contain at least six characters
-            - should contain at most fifteen characters
+            - should contain at most twelve characters
     sign in
     create a rent-list
     create a car-rent in rent-list

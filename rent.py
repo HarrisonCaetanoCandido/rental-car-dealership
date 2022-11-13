@@ -1,15 +1,16 @@
 from exceptions import VehicleCurrentlyRentedError, YouHaveAlreadyRentedThisVehicle
-from vehicle import Vehicle
+
+
 class Rent:
     def __init__(self, user):
-        self.owner = user
+        self.renter = user
         self.rented_vehicle = []
 
     def add_vehicle(self, vehicle, date_it_was_rented, date_it_will_be_returned):
-        if self.search_an_already_rented_vehicle(vehicle) != None:
+        if self.search_an_already_rented_vehicle(vehicle) is not None:
             raise YouHaveAlreadyRentedThisVehicle
 
-        if vehicle.get_rental_date() != ['It is avaiable', 'It is avaiable', 'It is avaiable']:
+        if vehicle.get_rental_date() != ['It is available', 'It is available', 'It is available']:
             raise VehicleCurrentlyRentedError
 
         vehicle.set_rental_date(date_it_was_rented, date_it_will_be_returned)
@@ -19,9 +20,9 @@ class Rent:
         for index in range(0, len(self.rented_vehicle)):
             if self.rented_vehicle[index].plate == plate:
                 self.rented_vehicle[index].reset_vehicle_rent_data()
-                del(self.rented_vehicle[index])
+                del (self.rented_vehicle[index])
                 return
-            
+
     def get_rented_vehicles(self):
         return [self.rented_vehicle, len(self.rented_vehicle)]
 

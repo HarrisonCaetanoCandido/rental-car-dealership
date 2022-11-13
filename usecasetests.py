@@ -5,8 +5,9 @@ from inmemoryuserrepository import InMemoryUserRepository
 from exceptions import UserEmailAlreadyRegistered, IncorrectEmailOrPassword, InvalidPasswordError
 import pytest
 
+
 def test_sign_up_password_length_verification():
-    user_repo = InMemoryUserRepository()
+    user_repo = InMemoryUserRepository('harrison', 'hA44yZ0n_')
     sign_up = SignUp(user_repo)
 
     # less than 6 characters
@@ -17,8 +18,9 @@ def test_sign_up_password_length_verification():
     with pytest.raises(InvalidPasswordError):
         sign_up.perform('Harrison Caetano Cândido', 'h.candido20@unifesp.br', '0000000A013&7')
 
+
 def test_sign_up_password_alfabetic_verification():
-    user_repo = InMemoryUserRepository()
+    user_repo = InMemoryUserRepository('harrison', 'hA44yZ0n_')
     sign_up = SignUp(user_repo)
 
     # upper_letters
@@ -29,40 +31,45 @@ def test_sign_up_password_alfabetic_verification():
     with pytest.raises(InvalidPasswordError):
         sign_up.perform('Harrison Caetano Cândido', 'h.candido20@unifesp.br', '0AA13&7')
 
+
 def test_sign_up_password_special_character_verification():
-    user_repo = InMemoryUserRepository()
+    user_repo = InMemoryUserRepository('harrison', 'hA44yZ0n_')
     sign_up = SignUp(user_repo)
 
     with pytest.raises(InvalidPasswordError):
         sign_up.perform('Harrison Caetano Cândido', 'h.candido20@unifesp.br', '0Aa13777')
 
+
 def test_sign_up_user():
-    user_repo = InMemoryUserRepository()
+    user_repo = InMemoryUserRepository('harrison', 'hA44yZ0n_')
     sign_up = SignUp(user_repo)
     sign_up.perform('Harrison Caetano Cândido', 'h.candido20@unifesp.br', 'Aa12345&7')
 
-    assert user_repo.find_by_email('h.candido20@unifesp.br') != None
+    assert user_repo.find_by_email('h.candido20@unifesp.br') is not None
+
 
 def test_sign_up_user_email_already_registered():
-    user_repo = InMemoryUserRepository()
+    user_repo = InMemoryUserRepository('harrison', 'hA44yZ0n_')
     sign_up = SignUp(user_repo)
     sign_up.perform('Harrison Caetano Cândido', 'h.candido20@unifesp.br', 'Aa12345&7')
 
     with pytest.raises(UserEmailAlreadyRegistered):
         sign_up.perform('Harrison Caetano Cândido', 'h.candido20@unifesp.br', 'Aa12345&7')
 
+
 def test_sign_in_user():
-    user_repo = InMemoryUserRepository()
+    user_repo = InMemoryUserRepository('harrison', 'hA44yZ0n_')
     sign_up = SignUp(user_repo)
     sign_up.perform('Harrison Caetano Cândido', 'h.candido20@unifesp.br', 'Aa12345&7')
 
     sign_in = SignIn(user_repo)
 
     # aqui ele deve retornar o objeto usuário logado
-    assert sign_in.perform('h.candido20@unifesp.br', 'Aa12345&7') != False
+    assert sign_in.perform('h.candido20@unifesp.br', 'Aa12345&7') is not False
+
 
 def test_sign_in_wrong_password():
-    user_repo = InMemoryUserRepository()
+    user_repo = InMemoryUserRepository('harrison', 'hA44yZ0n_')
     sign_up = SignUp(user_repo)
     sign_up.perform('Harrison Caetano Cândido', 'h.candido20@unifesp.br', 'Aa12345&7')
 
@@ -76,8 +83,9 @@ def test_sign_in_wrong_password():
     with pytest.raises(IncorrectEmailOrPassword):
         sign_in.perform('h.candido20@unifesp.br', '121345&7')
 
+
 def test_rent_a_vehicle():
-    user_repo = InMemoryUserRepository()
+    user_repo = InMemoryUserRepository('harrison', 'hA44yZ0n_')
 
     sign_up = SignUp(user_repo)
     sign_up.perform('Harrison Caetano Cândido', 'h.candido20@unifesp.br', 'Aa12345&7')
@@ -97,12 +105,44 @@ def test_rent_a_vehicle():
 
     user.rent_list.remove_vehicle('csv22347')
     assert user.rent_list.get_rented_vehicles() == [[car_a, car_c], 2]
-    assert car_b.get_rental_date() == ['It is avaiable', 'It is avaiable', 'It is avaiable']
+    assert car_b.get_rental_date() == ['It is available', 'It is available', 'It is available']
 
     user.rent_list.remove_vehicle('xls332247')
     assert user.rent_list.get_rented_vehicles() == [[car_a], 1]
-    assert car_c.get_rental_date() == ['It is avaiable', 'It is avaiable', 'It is avaiable']
+    assert car_c.get_rental_date() == ['It is available', 'It is available', 'It is available']
 
     user.rent_list.remove_vehicle('xlsx4267')
     assert user.rent_list.get_rented_vehicles() == [[], 0]
-    assert car_a.get_rental_date() == ['It is avaiable', 'It is avaiable', 'It is avaiable']
+    assert car_a.get_rental_date() == ['It is available', 'It is available', 'It is available']
+
+
+def test_user_self_delete():
+    user_repo = InMemoryUserRepository('harrison', 'hA44yZ0n_')
+    sign_up = SignUp(user_repo)
+    sign_up.perform('Harrison', 'h.candido20@unifesp.br', 'Aa12345&7')
+
+    sign_in = SignIn(user_repo)
+    user = sign_in.perform('h.candido20@unifesp.br', 'Aa12345&7')
+
+    user.delete_account('Aa12345&7')
+
+    assert user_repo.find_by_email('h.candido20@unifesp.br') is None
+    assert user_repo.get_users_quantity() == 0
+
+
+def test_delete_user_from_user_repo():
+    user_repo = InMemoryUserRepository('harrison', 'hA44yZ0n_')
+    sign_up = SignUp(user_repo)
+    sign_up.perform('Harrison', 'h.candido20@unifesp.br', 'Aa12345&7')
+
+    user = user_repo.find_by_email('h.candido20@unifesp.br')
+
+    """
+    como usamos hash nas senhas, é necessário um método interno para um administrador do banco de usuários
+    que possa excluir contas sem precisar crackear a senha, caso esse que seria muito custoso e provavelmente não
+    funcionaria para senhas muito fortes
+    """
+
+    assert user_repo.remove_user(user.email, 'harrison', 'hA44yZ0n_') == 'This account has been removed'
+    assert user_repo.find_by_email('h.candido20@unifesp.br') is None
+    assert user_repo.get_users_quantity() == 0

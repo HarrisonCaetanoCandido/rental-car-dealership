@@ -1,5 +1,6 @@
 import datetime
 
+
 class Vehicle:
     def __init__(self, brand, model, plate, daily_rate, factory_year) -> None:
         self.brand = brand
@@ -7,9 +8,9 @@ class Vehicle:
         self.plate = plate
         self.daily_rate = daily_rate
         self.factory_year = factory_year
-        self.date_it_was_rented = "It is avaiable"
-        self.date_it_will_be_returned = "It is avaiable"
-        self.rented_days = "It is avaiable"
+        self.date_it_was_rented = "It is available"
+        self.date_it_will_be_returned = "It is available"
+        self.rented_days = "It is available"
         self.amount = 0.0
     
     def get_brand(self):
@@ -28,9 +29,9 @@ class Vehicle:
         return self.factory_year
 
     def reset_vehicle_rent_data(self):
-        self.date_it_was_rented = "It is avaiable"
-        self.date_it_will_be_returned = "It is avaiable"
-        self.rented_days = "It is avaiable"
+        self.date_it_was_rented = "It is available"
+        self.date_it_will_be_returned = "It is available"
+        self.rented_days = "It is available"
         self.amount = 0.0
 
     def get_rental_date(self):

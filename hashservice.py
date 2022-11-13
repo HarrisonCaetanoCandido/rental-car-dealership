@@ -8,6 +8,7 @@ this makes it ideal for passwords and authentication.
 """
 import bcrypt
 
+
 class HashService:
     def __init__(self):
         # gera nosso salt, que é uma string pseudoaleatória adicionada ao fim da senha, antes do hashing
